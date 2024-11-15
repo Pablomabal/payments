@@ -1,0 +1,71 @@
+================================================================
+                        PAYMENTS
+================================================================
+
+To run this project, you will MySQL installed
+you can change these properties to the correct ones if you dont have the database or user created
+
+spring.datasource.url
+spring.datasource.username
+spring.datasource.password
+
+Also, you will need to have a kafka server running, you can use the default one from
+https://kafka.apache.org/quickstart
+
+This project has 2 controllers, one for payments and one for users
+
+A user can have many payments.
+
+Payments controllers is in charge to receive the creation calls for payments and notify those to the queue.
+
+There are 3 types of payments with different attributes, in the payload of the controller there has to be a field
+"type" to allow the controller to map the correct one, other than that the implementation is completely transparent.
+
+These are the 3 types of payments you can create:
+
+Credit Card:
+{
+"type":"credit_card",
+ "payment_id": "abc123",
+ "card_id": "43211234",
+ "user_id": "113411",
+ "amount": 100,
+ "currency": "USD",
+ "status": "COMPLETED",
+ "created_at": "2024-10-15T10:20:00Z",
+ "merchant": {
+ "name": "Amazon",
+ "merchant_id": "12309"
+ },
+ "mcc_code": 5411
+}
+
+Transfer:
+{
+"type":"transfer",
+ "transaction_id": "def456",
+ "user_id": "113411",
+ "amount": 250,
+ "currency": "EUR",
+ "status": "PENDING",
+ "created_at": "2024-10-14T08:45:30Z",
+ "bank_code": "BANK123",
+ "recipient_account": "DE89370400440532013000"
+}
+
+Peer to peer (P2P):
+{
+"type": "peer_to_peer",
+ "transfer_id": "ghi789",
+  "sender_id": "113411",
+  "recipient_id": "113412",
+  "amount": 50,
+  "currency": "USD",
+  "status": "COMPLETED",
+  "created_at": "2024-10-14T15:30:45Z",
+  "note": "Cena en restaurante"
+}
+
+The users controller allows you to retrieve user payments list.
+
+The payments controller allows to see the state of any payment by ID.
